@@ -214,10 +214,12 @@ int IonController::allocate(alloc_data& data, int usage)
         nonContig = true;
     }
 
+#ifndef NO_IOMMU
     if(usage & GRALLOC_USAGE_PRIVATE_IOMMU_HEAP) {
         ionFlags |= ION_HEAP(ION_IOMMU_HEAP_ID);
         nonContig = true;
     }
+#endif
 
 #ifdef SECURE_MM_HEAP
     if(usage & GRALLOC_USAGE_PROTECTED) {
@@ -245,6 +247,12 @@ int IonController::allocate(alloc_data& data, int usage)
 #endif
     }
 
+#ifdef NO_IOMMU
+    if(nonContig) {
+        nonContig = false;
+    }
+#endif
+
     if(usage & GRALLOC_USAGE_PRIVATE_CAMERA_HEAP)
         ionFlags |= ION_HEAP(ION_CAMERA_HEAP_ID);
 
@@ -263,8 +271,12 @@ int IonController::allocate(alloc_data& data, int usage)
     // SF + IOMMU heaps, so that bypass can work
     // we can fall back to system heap if
     // we run out.
-    if(!ionFlags)
-        ionFlags = ION_HEAP(ION_SF_HEAP_ID) | ION_HEAP(ION_IOMMU_HEAP_ID);
+    if(!ionFlags) {
+        ionFlags = ION_HEAP(ION_SF_HEAP_ID);
+#ifndef NO_IOMMU
+        ionFlags |= ION_HEAP(ION_IOMMU_HEAP_ID);
+#endif
+    }
 
     data.flags = ionFlags;
     ret = mIonAlloc->alloc_buffer(data);
@@ -278,6 +290,12 @@ int IonController::allocate(alloc_data& data, int usage)
         nonContig = true;
         ret = mIonAlloc->alloc_buffer(data);
     }
+
+#ifdef NO_IOMMU
+    if(nonContig) {
+        nonContig = false;
+    }
+#endif
 
     if(ret >= 0 ) {
         data.allocType |= private_handle_t::PRIV_FLAGS_USES_ION;
