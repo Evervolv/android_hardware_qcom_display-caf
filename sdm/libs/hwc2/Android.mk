@@ -20,6 +20,9 @@ ifeq ($(TARGET_EXCLUDES_DISPLAY_PP), true)
 LOCAL_CFLAGS += -DEXCLUDE_DISPLAY_PP
 endif
 
+# Suppress warnings until they are fixed in hwc_display.cpp.
+LOCAL_CFLAGS                  += -Wno-implicit-fallthrough
+
 LOCAL_CLANG                   := true
 
 # TODO: Remove libui after addressing gpu_tonemapper issues
