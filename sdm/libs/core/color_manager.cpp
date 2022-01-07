@@ -229,8 +229,8 @@ ColorManagerProxy *ColorManagerProxy::CreateColorManagerProxy(DisplayType type,
       }
 
       if (color_manager_proxy->HasNativeModeSupport()) {
-        color_manager_proxy->curr_mode_.gamut = ColorPrimaries_BT709_5;
-        color_manager_proxy->curr_mode_.gamma = Transfer_sRGB;
+        color_manager_proxy->curr_mode_.gamut = ColorPrimaries_Max;
+        color_manager_proxy->curr_mode_.gamma = Transfer_Max;
         color_manager_proxy->curr_mode_.intent = snapdragoncolor::kNative;
       }
     }

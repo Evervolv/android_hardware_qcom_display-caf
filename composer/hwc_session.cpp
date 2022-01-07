@@ -75,6 +75,7 @@ static const uint32_t kSvBlScaleMax = 65535;
 int32_t GetDataspaceFromColorMode(ColorMode mode) {
   switch (mode) {
     case ColorMode::SRGB:
+    // dataspace is ignored in native mode
     case ColorMode::NATIVE:
       return HAL_DATASPACE_V0_SRGB;
     case ColorMode::DCI_P3:
